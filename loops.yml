@@ -1,0 +1,26 @@
+class loop_test {
+  #Invoking the loop resource name is the loop starting point.
+  loop{"1":
+    count=>"5", # Loop ending index
+  }
+
+}
+
+define loop($count) {
+
+  if ($name > $count) {
+    notice("Loop Iteration Finished!!!\n")
+  }
+  else
+  {
+    notice("The Iteration Number : $name \n")
+
+
+    $next = $name + 1
+    loop { $next:
+      count => "${count}",
+    }
+  }
+}
+
+include loop_test

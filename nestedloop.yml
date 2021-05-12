@@ -1,0 +1,45 @@
+class loop_test {
+  #Invoking the loop resource name is the loop starting point.
+  loop{"1":
+    count=>"5", # Loop ending index
+  }
+
+  $config_array = ["Value 01","Value 02","Value 03","Value 04","Value 05"]
+
+}
+
+
+define loop($count) {
+
+  if ($name > $count) {
+    notice("Loop Iteration Finished!!!\n")
+  }
+  else
+  {
+    notice("The Iteration Number : $name \n")
+
+    # This is to avoid any resource name duplications
+    $local_names = regsubst($loop_test::config_array, '$', "-$name")
+
+    # Invoking the second iteration
+    push_templates{$local_names:
+      loop_index => $name,
+    }
+
+    $next = $name + 1
+    loop { $next:
+      count => "${count}",
+    }
+  }
+}
+
+define push_templates($loop_index) {
+
+  $orig_name = regsubst($name, '-[0-9]+$', '') # Extract the Original name
+
+  # Do something Here
+
+  notice("The Loop Index : ${loop_index} \n The Array Content : $orig_name \n")
+}
+
+include loop_test
